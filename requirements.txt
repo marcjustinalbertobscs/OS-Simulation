@@ -1,0 +1,130 @@
+# Project Requirements & Setup
+
+## System Requirements
+- Node.js v16.0.0 or higher
+- npm v7.0.0 or higher (comes with Node.js)
+
+## Installation
+
+### 1. Install Node.js
+Download from: https://nodejs.org/
+
+### 2. Install Project Dependencies
+```bash
+npm install
+```
+
+## Core Dependencies
+
+### Runtime Dependencies
+- **react** (^19.2.4) - UI library for building user interfaces
+- **react-dom** (^19.2.4) - React rendering for web
+- **express** (^5.2.1) - Backend web framework
+- **cors** (^2.8.6) - Cross-Origin Resource Sharing middleware
+- **sqlite3** (^6.0.1) - SQLite database driver
+- **sqlite** (^5.1.1) - SQLite database library
+
+### Development Dependencies
+- **vite** (^7.3.1) - Frontend build tool and dev server
+- **@vitejs/plugin-react** (^5.2.0) - React plugin for Vite
+- **tailwindcss** (^4.2.2) - Utility-first CSS framework
+- **@tailwindcss/vite** (^4.2.2) - Tailwind CSS for Vite
+- **eslint** (^9.39.4) - Code linting
+- **eslint-plugin-react-hooks** (^7.0.1) - React hooks linting
+- **eslint-plugin-react-refresh** (^0.5.2) - React refresh linting
+- **@types/react** (^19.2.14) - TypeScript types for React
+- **@types/react-dom** (^19.2.3) - TypeScript types for React DOM
+- **globals** (^17.4.0) - Global variables for ESLint
+
+## Available Scripts
+
+### Development
+```bash
+# Start development server (frontend on http://localhost:5173)
+npm run dev
+
+# Start backend server (on http://localhost:3000)
+npm run server
+```
+
+### Production
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Code Quality
+```bash
+# Run ESLint checks
+npm run lint
+```
+
+## Quick Start
+
+1. **Clone/Navigate to project directory:**
+   ```bash
+   cd c:\Users\alber\OS-FinalProject
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open browser:**
+   - Navigate to `http://localhost:5173` for the frontend
+
+## Project Structure
+
+```
+src/                 - React frontend source code
+├── apps/           - Application components (Word Processor, Calculator, etc.)
+├── components/     - Reusable UI components
+├── context/        - React context for state management
+├── hooks/          - Custom React hooks
+├── store/          - State management stores
+├── styles/         - CSS styles
+└── utils/          - Utility functions and constants
+
+server/            - Node.js backend
+├── index.js       - Server entry point
+├── db.js          - Database configuration
+├── controllers/   - Route controllers
+├── routes/        - API routes
+└── services/      - Business logic services
+
+public/            - Static assets
+```
+
+## Troubleshooting
+
+### npm install fails
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Delete node_modules and package-lock.json
+rm -r node_modules package-lock.json
+
+# Reinstall
+npm install
+```
+
+### Port already in use
+- Development server uses port 5173
+- Backend server uses port 3000
+- Kill processes using these ports or change ports in configuration
+
+## Notes
+- The project uses ES modules (type: "module" in package.json)
+- Tailwind CSS is configured for styling
+- ESLint is configured for code quality checks
+- SQLite is used for the database

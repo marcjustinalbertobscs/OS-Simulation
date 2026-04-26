@@ -1,0 +1,201 @@
+/* Window Component Styles */
+
+.window {
+  display: flex;
+  flex-direction: column;
+  background: var(--window-bg, #f5f5f5);
+  border: 1px solid var(--window-border, #d0d0d0);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
+
+.window[data-theme='dark'] {
+  --window-bg: #1e1e1e;
+  --window-border: #333;
+  --title-bg: #1e1e1e;
+  --title-text: #e0e0e0;
+  --button-hover: #333;
+}
+
+.window[data-theme='light'] {
+  --window-bg: #f5f5f5;
+  --window-border: #d0d0d0;
+  --title-bg: #e8e8e8;
+  --title-text: #000;
+  --button-hover: #ddd;
+}
+
+/* Title Bar */
+.window-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 8px;
+  background: linear-gradient(180deg, #0078d4 0%, #0078d4 100%);
+  color: white;
+  cursor: move;
+  flex-shrink: 0;
+}
+
+.window-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Window Buttons */
+.window-buttons {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.window-button {
+  width: 36px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.1s;
+}
+
+.window-button:hover:not(.close-btn) {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.window-button.close-btn:hover {
+  background-color: #e81123;
+}
+
+.window-button:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.window-button.close-btn:active {
+  background-color: #c50f1f;
+}
+
+/* Window Content */
+.window-content {
+  flex: 1;
+  overflow: auto;
+  background: var(--window-bg);
+  color: var(--text-color, #000);
+}
+
+[data-theme='dark'] .window-content {
+  --text-color: #e0e0e0;
+}
+
+[data-theme='light'] .window-content {
+  --text-color: #000;
+}
+
+/* Resize Handles */
+.resize-handle {
+  position: absolute;
+  background: transparent;
+}
+
+.resize-handle-e,
+.resize-handle-w {
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: ew-resize;
+}
+
+.resize-handle-e {
+  right: 0;
+}
+
+.resize-handle-w {
+  left: 0;
+}
+
+.resize-handle-s,
+.resize-handle-n {
+  left: 0;
+  right: 0;
+  height: 4px;
+  cursor: ns-resize;
+}
+
+.resize-handle-s {
+  bottom: 0;
+}
+
+.resize-handle-n {
+  top: 0;
+}
+
+.resize-handle-se {
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  cursor: se-resize;
+}
+
+.resize-handle-sw {
+  bottom: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  cursor: sw-resize;
+}
+
+.resize-handle-ne {
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  cursor: ne-resize;
+}
+
+.resize-handle-nw {
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nw-resize;
+}
+
+/* Scrollbar styling */
+.window-content::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.window-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 6px;
+}
+
+.window-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+[data-theme='dark'] .window-content::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+[data-theme='dark'] .window-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

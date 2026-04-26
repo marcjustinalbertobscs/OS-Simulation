@@ -1,0 +1,58 @@
+/* Desktop Styles */
+
+.desktop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--os-bg);
+}
+
+.desktop[data-theme='dark'] {
+  --os-bg: #0d1117;
+}
+
+.desktop[data-theme='light'] {
+  --os-bg: #1f497d;
+}
+
+/* Desktop background */
+.desktop-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1f497d 0%, #0d5a8f 100%);
+  z-index: 0;
+}
+
+[data-theme='dark'] .desktop-background {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+}
+
+[data-theme='light'] .desktop-background {
+  background: linear-gradient(135deg, #1f497d 0%, #0d5a8f 100%);
+}
+
+/* Start menu overlay (for closing menu when clicking outside) */
+.start-menu-overlay {
+  position: fixed;
+  bottom: 48px;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 900;
+  animation: fadeIn 0.1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

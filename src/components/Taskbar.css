@@ -1,0 +1,222 @@
+/* Taskbar Styles */
+
+.taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: var(--taskbar-bg);
+  border-top: 1px solid var(--taskbar-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  z-index: 999;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.taskbar[data-theme='dark'] {
+  --taskbar-bg: #1e1e1e;
+  --taskbar-border: #333;
+  --taskbar-button-hover: #2d2d2d;
+  --taskbar-text: #e0e0e0;
+}
+
+.taskbar[data-theme='light'] {
+  --taskbar-bg: rgba(255, 255, 255, 0.8);
+  --taskbar-border: rgba(0, 0, 0, 0.1);
+  --taskbar-button-hover: rgba(0, 0, 0, 0.05);
+  --taskbar-text: #000;
+}
+
+/* Start button */
+.start-button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--taskbar-text);
+  transition: background-color 0.1s;
+  border-radius: 4px;
+}
+
+.start-button:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+.start-button.active {
+  background-color: #0078d4;
+  color: white;
+}
+
+.start-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Taskbar separator */
+.taskbar-separator {
+  width: 1px;
+  height: 24px;
+  background: var(--taskbar-border);
+  margin: 0 4px;
+}
+
+/* Apps section */
+.taskbar-apps {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
+}
+
+.taskbar-app-group {
+  position: relative;
+}
+
+.taskbar-app-icon {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+  position: relative;
+  color: var(--taskbar-text);
+}
+
+.taskbar-app-icon:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+.taskbar-app-icon.open {
+  background-color: var(--taskbar-button-hover);
+  border-bottom: 3px solid #0078d4;
+}
+
+.taskbar-app-icon.open:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+.app-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* App preview tooltip */
+.app-preview {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  background: var(--taskbar-bg);
+  border: 1px solid var(--taskbar-border);
+  border-radius: 4px;
+  min-width: 200px;
+  max-width: 300px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s, visibility 0.1s;
+  overflow: hidden;
+}
+
+.taskbar-app-group:hover .app-preview {
+  opacity: 1;
+  visibility: visible;
+}
+
+.preview-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  color: var(--taskbar-text);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--taskbar-border);
+}
+
+.preview-item:last-child {
+  border-bottom: none;
+}
+
+.preview-item:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+/* Taskbar spacer */
+.taskbar-spacer {
+  flex: 1;
+}
+
+/* System tray */
+.system-tray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.tray-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+  font-size: 16px;
+  color: var(--taskbar-text);
+}
+
+.tray-icon:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+.tray-clock {
+  min-width: 60px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--taskbar-text);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+  font-family: 'Courier New', monospace;
+}
+
+.tray-clock:hover {
+  background-color: var(--taskbar-button-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .taskbar {
+    padding: 0 4px;
+  }
+
+  .taskbar-spacer {
+    display: none;
+  }
+
+  .tray-clock {
+    font-size: 11px;
+    min-width: 50px;
+  }
+}

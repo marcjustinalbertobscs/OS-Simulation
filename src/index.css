@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+:root {
+  --accent-color: #0a84ff;
+  --shell-text: #f5fbff;
+  --shell-text-muted: rgba(245, 251, 255, 0.72);
+  --shell-taskbar-bg: rgba(27, 39, 49, 0.62);
+  --shell-taskbar-border: rgba(255, 255, 255, 0.18);
+  --shell-taskbar-hover: rgba(255, 255, 255, 0.16);
+  --shell-taskbar-active: rgba(255, 255, 255, 0.24);
+  --shell-panel-bg: rgba(20, 30, 39, 0.68);
+  --shell-panel-border: rgba(255, 255, 255, 0.18);
+  --shell-panel-soft: rgba(255, 255, 255, 0.08);
+  --shell-window-bg: rgba(244, 247, 251, 0.88);
+  --shell-window-border: rgba(255, 255, 255, 0.5);
+  --shell-window-title: rgba(227, 236, 244, 0.86);
+  --shell-window-hover: rgba(17, 24, 39, 0.06);
+  --shell-desktop-glow: radial-gradient(circle at 80% 20%, rgba(255, 214, 102, 0.58), transparent 34%),
+    radial-gradient(circle at 18% 78%, rgba(24, 157, 255, 0.42), transparent 28%),
+    radial-gradient(circle at 36% 30%, rgba(243, 87, 120, 0.2), transparent 32%);
+  --app-bg: #f5f7fb;
+  --app-text: #111827;
+  --app-border: rgba(148, 163, 184, 0.35);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --button-bg: rgba(241, 245, 249, 0.95);
+  --button-hover-bg: rgba(226, 232, 240, 0.95);
+  --window-bg: var(--app-bg);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --bg: #dbeafe;
+  --border: rgba(148, 163, 184, 0.4);
+}
+
+:root[data-theme='light'] {
+  --shell-window-bg: rgba(248, 250, 252, 0.92);
+  --shell-window-title: rgba(236, 242, 248, 0.92);
+  --shell-window-border: rgba(255, 255, 255, 0.62);
+}
+
+:root[data-theme='dark'] {
+  --text: #e5edf7;
+  --text-muted: #a8bbd0;
+  --bg: #08111f;
+  --border: rgba(148, 163, 184, 0.24);
+  --shell-text: #edf7ff;
+  --shell-text-muted: rgba(237, 247, 255, 0.68);
+  --shell-taskbar-bg: rgba(11, 19, 29, 0.72);
+  --shell-taskbar-border: rgba(255, 255, 255, 0.1);
+  --shell-taskbar-hover: rgba(255, 255, 255, 0.08);
+  --shell-taskbar-active: rgba(255, 255, 255, 0.14);
+  --shell-panel-bg: rgba(8, 16, 26, 0.78);
+  --shell-panel-border: rgba(255, 255, 255, 0.1);
+  --shell-panel-soft: rgba(255, 255, 255, 0.05);
+  --shell-window-bg: rgba(15, 23, 34, 0.86);
+  --shell-window-border: rgba(255, 255, 255, 0.08);
+  --shell-window-title: rgba(14, 22, 31, 0.92);
+  --shell-window-hover: rgba(255, 255, 255, 0.06);
+  --app-bg: #16202b;
+  --app-text: #edf2f8;
+  --app-border: rgba(148, 163, 184, 0.22);
+  --input-bg: rgba(15, 23, 34, 0.98);
+  --button-bg: rgba(30, 41, 59, 0.92);
+  --button-hover-bg: rgba(51, 65, 85, 0.96);
+  --window-bg: var(--app-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Segoe UI", "Inter", sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+input,
+textarea,
+select {
+  color: var(--app-text);
+  background: var(--input-bg);
+  border: 1px solid var(--app-border);
+}
+
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent-color) 82%, white);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent-color) 84%, white);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.52);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.74);
+}

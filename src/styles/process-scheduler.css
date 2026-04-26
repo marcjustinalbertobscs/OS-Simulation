@@ -1,0 +1,843 @@
+/* Process Manager, CPU Scheduler, and Memory Manager Styles */
+
+/* ============================================
+   COMMON STYLES
+   ============================================ */
+
+.process-manager,
+.scheduler,
+.memory-manager {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  background-color: var(--bg-secondary, #f5f5f5);
+  color: var(--text-primary, #333);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+}
+
+/* Dark mode support */
+[data-theme='dark'] {
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #999;
+  --border-color: #444;
+  --table-border: #444;
+}
+
+[data-theme='light'] {
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #fff;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --border-color: #ddd;
+  --table-border: #ddd;
+}
+
+/* Common header styles */
+.process-manager-header,
+.scheduler-header,
+.memory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.process-manager-header h2,
+.scheduler-header h2,
+.memory-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.process-controls,
+.scheduler-controls,
+.memory-controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--accent-color, #0078d4);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #005a9e;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--text-secondary);
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #b71c1c;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Dialog Overlay */
+.process-dialog-overlay,
+.memory-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.process-dialog,
+.memory-dialog {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.process-dialog h3,
+.memory-dialog h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.1);
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* ============================================
+   PROCESS MANAGER STYLES
+   ============================================ */
+
+.process-table-container {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.process-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.process-table thead {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.process-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.process-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.process-table tbody tr:hover {
+  background-color: var(--accent-color);
+  background-color: rgba(0, 120, 212, 0.1);
+}
+
+.process-id {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.state-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Process Summary */
+.process-summary {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.process-summary h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* ============================================
+   CPU SCHEDULER STYLES
+   ============================================ */
+
+.scheduler {
+  gap: 16px;
+}
+
+.scheduler-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .scheduler-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scheduler-left,
+.scheduler-right {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scheduler-left h3,
+.scheduler-right h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Algorithm Info */
+.algorithm-info {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: var(--accent-color);
+  background-color: rgba(0, 120, 212, 0.1);
+  border-left: 4px solid var(--accent-color);
+  border-radius: 4px;
+}
+
+.algorithm-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.algorithm-info p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Ready Queue */
+.ready-queue {
+  margin-top: 12px;
+}
+
+.queue-display {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 2px solid var(--border-color);
+  font-size: 12px;
+}
+
+.queue-process-id {
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.queue-process-name {
+  flex: 1;
+}
+
+.queue-burst {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.empty-queue,
+.empty-stats {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-style: italic;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Statistics */
+.statistics {
+  margin-top: 12px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.stat-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* Gantt Chart */
+.gantt-section {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.gantt-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gantt-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.gantt-visualization {
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.gantt-container {
+  position: relative;
+}
+
+.gantt-axis {
+  margin-bottom: 8px;
+}
+
+.gantt-time-labels {
+  display: flex;
+  gap: 20px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 0 40px;
+}
+
+.time-label {
+  width: 20px;
+  text-align: center;
+}
+
+.gantt-blocks {
+  position: relative;
+  height: 120px;
+  background-color: var(--bg-tertiary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.gantt-block {
+  position: absolute;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent-color) 0%, #005a9e 100%);
+  color: white;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid #003d6b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  top: 20px;
+}
+
+.gantt-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.block-label {
+  pointer-events: none;
+}
+
+.block-time {
+  font-size: 10px;
+  opacity: 0.9;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Schedule Table */
+.schedule-table-container {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-table-container h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.schedule-table thead {
+  background-color: rgba(0, 120, 212, 0.2);
+}
+
+.schedule-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.schedule-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-table tbody tr:hover {
+  background-color: rgba(0, 120, 212, 0.1);
+}
+
+.process-col {
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+}
+
+/* ============================================
+   MEMORY MANAGER STYLES
+   ============================================ */
+
+.memory-manager {
+  gap: 16px;
+}
+
+/* Memory Visualization */
+.memory-visualization {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.memory-visualization h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.memory-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.memory-partition-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.address-label {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.memory-partition {
+  height: 120px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.memory-partition:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.partition-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] .partition-info {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.partition-id {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.partition-size {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.partition-process {
+  font-size: 10px;
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+.partition-free {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* Memory Status */
+.memory-status {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.memory-status h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .status-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.status-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  font-size: 12px;
+}
+
+.status-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.status-value {
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+.utilization-bar {
+  position: relative;
+  height: 40px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.utilization-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color) 0%, #005a9e 100%);
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.utilization-text {
+  position: relative;
+  z-index: 10;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Allocations Table */
+.allocations-table-container {
+  background-color: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.allocations-table-container h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.allocations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.allocations-table thead {
+  background-color: rgba(0, 120, 212, 0.2);
+}
+
+.allocations-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.allocations-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-family: 'Courier New', monospace;
+}
+
+.allocations-table tbody tr:hover {
+  background-color: rgba(0, 120, 212, 0.1);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+.status-badge.allocated {
+  background-color: #107c10;
+}
+
+.status-badge.free {
+  background-color: #ffc800;
+  color: #000;
+}
+
+.empty-allocations {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
