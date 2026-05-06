@@ -126,31 +126,7 @@ const TaskManager = () => {
             className={`sidebar-item ${activeTab === 'performance' ? 'active' : ''}`}
             onClick={() => setActiveTab('performance')}
           >
-            <div className="sidebar-item-content">
-              <span className="sidebar-label">Performance</span>
-            </div>
-            <div className="sidebar-graphs">
-              <div className="graph-item">
-                <div className="graph-label">CPU: {performance.cpu.usage}%</div>
-                <CPUGraph data={cpuHistory} small={true} />
-              </div>
-              <div className="graph-item">
-                <div className="graph-label">Memory: {performance.memory.usage}%</div>
-                <CPUGraph data={memoryHistory} small={true} />
-              </div>
-              <div className="graph-item">
-                <div className="graph-label">Disk: {performance.disk.usage}%</div>
-                <CPUGraph data={Array(60).fill(performance.disk.usage)} small={true} />
-              </div>
-              <div className="graph-item">
-                <div className="graph-label">Wi-Fi: 0%</div>
-                <CPUGraph data={Array(60).fill(0)} small={true} />
-              </div>
-              <div className="graph-item">
-                <div className="graph-label">GPU: {performance.gpu.usage}%</div>
-                <CPUGraph data={Array(60).fill(performance.gpu.usage)} small={true} />
-              </div>
-            </div>
+            <span className="sidebar-label">Performance</span>
           </div>
 
           <div 
