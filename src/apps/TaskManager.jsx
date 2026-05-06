@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ProcessManager from './ProcessManager';
+import Scheduler from './Scheduler';
+import MemoryManager from './MemoryManager';
 import '../styles/task-manager.css';
 
 /**
@@ -150,45 +153,20 @@ const TaskManager = () => {
             </div>
           </div>
 
-          {/* App history */}
           <div 
-            className={`sidebar-item ${activeTab === 'apphistory' ? 'active' : ''}`}
-            onClick={() => setActiveTab('apphistory')}
+            className={`sidebar-item ${activeTab === 'scheduler' ? 'active' : ''}`}
+            onClick={() => setActiveTab('scheduler')}
           >
-            <span className="sidebar-label">App history</span>
+            <span className="sidebar-label">CPU Scheduler</span>
           </div>
 
-          {/* Startup apps */}
           <div 
-            className={`sidebar-item ${activeTab === 'startup' ? 'active' : ''}`}
-            onClick={() => setActiveTab('startup')}
+            className={`sidebar-item ${activeTab === 'memory' ? 'active' : ''}`}
+            onClick={() => setActiveTab('memory')}
           >
-            <span className="sidebar-label">Startup apps</span>
+            <span className="sidebar-label">Memory Manager</span>
           </div>
 
-          {/* Users */}
-          <div 
-            className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`}
-            onClick={() => setActiveTab('users')}
-          >
-            <span className="sidebar-label">Users</span>
-          </div>
-
-          {/* Details */}
-          <div 
-            className={`sidebar-item ${activeTab === 'details' ? 'active' : ''}`}
-            onClick={() => setActiveTab('details')}
-          >
-            <span className="sidebar-label">Details</span>
-          </div>
-
-          {/* Services */}
-          <div 
-            className={`sidebar-item ${activeTab === 'services' ? 'active' : ''}`}
-            onClick={() => setActiveTab('services')}
-          >
-            <span className="sidebar-label">Services</span>
-          </div>
         </nav>
 
         <div className="sidebar-footer">
@@ -201,39 +179,10 @@ const TaskManager = () => {
         </div>
       </div>
 
-      <div className="tm-main-content">
+      <div className="tm-main-content w-full h-full overflow-hidden">
         {activeTab === 'processes' && (
-          <div className="tm-processes">
-            <div className="content-header">
-              <h2>Processes</h2>
-            </div>
-            <table className="tm-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>CPU</th>
-                  <th>Memory</th>
-                  <th>Disk</th>
-                  <th>Network</th>
-                </tr>
-              </thead>
-              <tbody>
-                {processes.map((process, index) => (
-                  <tr key={index} className="tm-process-row">
-                    <td className="process-name">{process.name}</td>
-                    <td className="process-status">
-                      <span className="status-indicator running"></span>
-                      Running
-                    </td>
-                    <td className="process-cpu">{process.cpu}</td>
-                    <td className="process-memory">{process.memory}</td>
-                    <td className="process-disk">{process.disk}</td>
-                    <td className="process-network">{process.network}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="tm-embedded-app h-full w-full overflow-hidden">
+            <ProcessManager />
           </div>
         )}
 
@@ -426,7 +375,19 @@ const TaskManager = () => {
           </div>
         )}
 
-        {(activeTab === 'apphistory' || activeTab === 'startup' || activeTab === 'users' || activeTab === 'details' || activeTab === 'services' || activeTab === 'settings') && (
+        {activeTab === 'scheduler' && (
+          <div className="tm-embedded-app h-full w-full overflow-hidden">
+            <Scheduler />
+          </div>
+        )}
+
+        {activeTab === 'memory' && (
+          <div className="tm-embedded-app h-full w-full overflow-hidden">
+            <MemoryManager />
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
           <div className="tm-placeholder">
             <p>Tab content not available in this simulator</p>
           </div>

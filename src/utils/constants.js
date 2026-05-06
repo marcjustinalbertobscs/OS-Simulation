@@ -215,15 +215,17 @@ export const PINNED_APPS = [
   { id: 'word-processor', type: APP_TYPES.WORD_PROCESSOR, label: 'Word Processor', icon: '📄' },
   { id: 'calculator', type: APP_TYPES.CALCULATOR, label: 'Calculator', icon: '🧮' },
   { id: 'settings', type: APP_TYPES.SETTINGS, label: 'Settings', icon: '⚙️' },
+  { id: 'task-manager', type: APP_TYPES.TASK_MANAGER, label: 'Task Manager', icon: '📊' },
+];
+
+export const ALL_APPS = [
+  ...PINNED_APPS,
   { id: 'process-manager', type: APP_TYPES.PROCESS_MANAGER, label: 'Process Manager', icon: '🔄' },
   { id: 'scheduler', type: APP_TYPES.SCHEDULER, label: 'CPU Scheduler', icon: '⏱️' },
   { id: 'memory-manager', type: APP_TYPES.MEMORY_MANAGER, label: 'Memory Manager', icon: '💾' },
-  { id: 'task-manager', type: APP_TYPES.TASK_MANAGER, label: 'Task Manager', icon: '📊' },
   { id: 'disk-management', type: APP_TYPES.DISK_MANAGEMENT, label: 'Disk Management', icon: '💽' },
   { id: 'command-prompt', type: APP_TYPES.COMMAND_PROMPT, label: 'Command Prompt', icon: '>' },
 ];
-
-export const ALL_APPS = PINNED_APPS;
 
 export const STORAGE_KEYS = {
   WINDOWS: 'os-windows',
