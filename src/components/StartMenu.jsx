@@ -34,7 +34,7 @@ const StartMenu = ({ onClose }) => {
   return (
     <div className="fixed bottom-16 left-[140px] z-[3500] flex justify-start px-4">
       <div 
-        className="w-full w-[640px] overflow-hidden rounded-[28px] border border-[var(--shell-panel-border)] bg-[var(--shell-panel-bg)] text-[var(--shell-text)] shadow-[0_30px_80px_rgba(0,0,0,0.36)] backdrop-blur-3xl transition-all duration-300 ease-out"
+        className="w-full w-[640px] overflow-hidden rounded-[32px] border border-white/20 bg-gradient-to-b from-white/10 to-transparent text-[var(--shell-text)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(255,255,255,0.1),0_40px_80px_rgba(0,0,0,0.5)] backdrop-blur-[60px] backdrop-saturate-[200%] transition-all duration-300 ease-out"
         style={{
           animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
         }}
