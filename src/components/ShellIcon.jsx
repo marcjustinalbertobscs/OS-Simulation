@@ -139,6 +139,14 @@ const appIconMap = {
       <rect x="15" y="14" width="3" height="3" rx="1" fill="#14b8a6" />
     </svg>
   ),
+  [APP_TYPES.DISK_MANAGEMENT]: (
+    <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="12" rx="2" fill="#4b5563" />
+      <circle cx="12" cy="12" r="4" fill="#d1d5db" />
+      <circle cx="12" cy="12" r="1.5" fill="#1f2937" />
+      <path d="M12 8a4 4 0 0 1 4 4" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  ),
 };
 
 export default function ShellIcon({ type, className = '' }) {
