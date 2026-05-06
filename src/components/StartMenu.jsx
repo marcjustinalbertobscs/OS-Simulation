@@ -32,8 +32,21 @@ const StartMenu = ({ onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-x-0 bottom-20 z-[3500] flex justify-center px-4">
-      <div className="w-full max-w-[640px] overflow-hidden rounded-[28px] border border-[var(--shell-panel-border)] bg-[var(--shell-panel-bg)] text-[var(--shell-text)] shadow-[0_30px_80px_rgba(0,0,0,0.36)] backdrop-blur-3xl">
+    <div className="fixed bottom-16 left-[140px] z-[3500] flex justify-start px-4">
+      <div 
+        className="w-full w-[640px] overflow-hidden rounded-[28px] border border-[var(--shell-panel-border)] bg-[var(--shell-panel-bg)] text-[var(--shell-text)] shadow-[0_30px_80px_rgba(0,0,0,0.36)] backdrop-blur-3xl transition-all duration-300 ease-out"
+        style={{
+          animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+        }}
+      >
+        <style>
+          {`
+            @keyframes slideUp {
+              0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+              100% { opacity: 1; transform: translateY(0) scale(1); }
+            }
+          `}
+        </style>
         <div className="border-b border-white/8 px-6 pb-5 pt-6">
           <div className="relative">
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--shell-text-muted)]">
