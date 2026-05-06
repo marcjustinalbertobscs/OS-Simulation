@@ -1,4 +1,4 @@
-import { WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT, DEFAULT_WINDOW_POSITIONS } from '../utils/constants';
+import { WINDOW_DEFAULT_WIDTH, WINDOW_DEFAULT_HEIGHT, DEFAULT_WINDOW_POSITIONS, ALL_APPS } from '../utils/constants';
 
 /**
  * Window store - manages all open windows and their state
@@ -33,13 +33,8 @@ export const createWindow = (appType, appId) => {
 };
 
 export const getWindowTitle = (appType) => {
-  const titles = {
-    'file-explorer': 'File Explorer',
-    'notepad': 'Notepad',
-    'calculator': 'Calculator',
-    'settings': 'Settings',
-  };
-  return titles[appType] || 'Window';
+  const app = ALL_APPS.find((a) => a.type === appType);
+  return app ? app.label : 'Window';
 };
 
 export const windowActions = {
