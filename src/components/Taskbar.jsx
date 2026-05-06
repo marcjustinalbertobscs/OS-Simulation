@@ -73,7 +73,11 @@ const Taskbar = ({ onStartMenuClick, startMenuOpen }) => {
         </button>
 
         <button
-          className="hidden h-10 min-w-[124px] items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm text-[var(--shell-text-muted)] transition hover:bg-white/15 sm:flex"
+          className={`hidden h-10 min-w-[124px] items-center gap-2 rounded-2xl border border-white/10 px-4 text-sm transition sm:flex ${
+            startMenuOpen 
+              ? 'bg-[var(--shell-taskbar-active)] text-white shadow-inner scale-[0.98]' 
+              : 'bg-white/10 text-[var(--shell-text-muted)] hover:bg-white/15'
+          }`}
           type="button"
           onClick={onStartMenuClick}
         >

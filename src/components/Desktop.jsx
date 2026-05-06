@@ -118,9 +118,10 @@ const Desktop = () => {
       case APP_TYPES.FILE_EXPLORER:
         return <FileExplorer />;
       case APP_TYPES.NOTEPAD:
-        return <Notepad />;
+        // We pass the appId as initialFilePath since that's what FileExplorer sends to openWindow
+        return <Notepad initialFilePath={windowData.appId} />;
       case APP_TYPES.WORD_PROCESSOR:
-        return <WordProcessor />;
+        return <WordProcessor initialFilePath={windowData.appId} />;
       case APP_TYPES.CALCULATOR:
         return <Calculator />;
       case APP_TYPES.SETTINGS:

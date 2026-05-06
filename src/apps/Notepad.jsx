@@ -6,8 +6,8 @@ import '../styles/apps.css';
  * Notepad App
  */
 
-const Notepad = () => {
-  const { createFile, updateFileContent, getDirectoryContents } = useFileSystem();
+const Notepad = ({ initialFilePath }) => {
+  const { createFile, updateFileContent, getDirectoryContents, getFile } = useFileSystem();
   const [content, setContent] = useState('');
   const [currentFile, setCurrentFile] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -15,6 +15,20 @@ const Notepad = () => {
   const [showOpenDialog, setShowOpenDialog] = useState(false);
   const [fileName, setFileName] = useState('untitled.txt');
   const [currentFolder, setCurrentFolder] = useState('C:\\Users\\Documents');
+
+  // Load initial file if provided
+  useEffect(() => {
+    if (initialFilePath && initialFilePath !== 'notepad') {
+      const file = getFile(initialFilePath);
+      if (file) {
+        setContent(file.content || '');
+        setCurrentFile(file.path);
+        setFileName(file.name);
+        setCurrentFolder(file.parent);
+        setIsDirty(false);
+      }
+    }
+  }, [initialFilePath, getFile]);
 
   // Auto-save every 30 seconds if dirty
   useEffect(() => {
