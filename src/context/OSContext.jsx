@@ -234,6 +234,7 @@ export const OSProvider = ({ children }) => {
 
   // File system operations
   const createFolder = useCallback((parentPath, folderName) => {
+    fileSystemDispatch({ type: 'CREATE_FOLDER', payload: { parentPath, folderName } });
     fileSystemApi
       .createItem({ parentPath, name: folderName, type: 'folder' })
       .then((fileSystem) => {
@@ -245,6 +246,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const createFile = useCallback((parentPath, fileName, content = '') => {
+    fileSystemDispatch({ type: 'CREATE_FILE', payload: { parentPath, fileName, content } });
     fileSystemApi
       .createItem({ parentPath, name: fileName, type: 'file', content })
       .then((fileSystem) => {
@@ -256,6 +258,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const updateFileContent = useCallback((filePath, content) => {
+    fileSystemDispatch({ type: 'UPDATE_FILE', payload: { filePath, content } });
     fileSystemApi
       .updateFileContent({ filePath, content })
       .then((fileSystem) => {
@@ -267,6 +270,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const deleteItem = useCallback((itemPath) => {
+    fileSystemDispatch({ type: 'DELETE_ITEM', payload: itemPath });
     fileSystemApi
       .deleteItem(itemPath)
       .then((fileSystem) => {
@@ -278,6 +282,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const renameItem = useCallback((itemPath, newName) => {
+    fileSystemDispatch({ type: 'RENAME_ITEM', payload: { itemPath, newName } });
     fileSystemApi
       .renameItem({ itemPath, newName })
       .then((fileSystem) => {
@@ -289,6 +294,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const moveItem = useCallback((itemPath, targetParentPath) => {
+    fileSystemDispatch({ type: 'MOVE_ITEM', payload: { itemPath, targetParentPath } });
     fileSystemApi
       .moveItem({ itemPath, targetParentPath })
       .then((fileSystem) => {
@@ -300,6 +306,7 @@ export const OSProvider = ({ children }) => {
   }, []);
 
   const copyItem = useCallback((itemPath, targetParentPath) => {
+    fileSystemDispatch({ type: 'COPY_ITEM', payload: { itemPath, targetParentPath } });
     fileSystemApi
       .copyItem({ itemPath, targetParentPath })
       .then((fileSystem) => {

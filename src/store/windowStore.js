@@ -38,6 +38,12 @@ export const getWindowTitle = (appType) => {
     'notepad': 'Notepad',
     'calculator': 'Calculator',
     'settings': 'Settings',
+    'word-processor': 'Word Processor',
+    'process-manager': 'Process Manager',
+    'scheduler': 'CPU Scheduler',
+    'memory-manager': 'Memory Manager',
+    'task-manager': 'Task Manager',
+    'command-prompt': 'Command Prompt',
   };
   return titles[appType] || 'Window';
 };

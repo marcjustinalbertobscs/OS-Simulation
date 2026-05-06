@@ -17,6 +17,7 @@ import ProcessManager from '../apps/ProcessManager';
 import Scheduler from '../apps/Scheduler';
 import MemoryManager from '../apps/MemoryManager';
 import TaskManager from '../apps/TaskManager';
+import CommandPrompt from '../apps/CommandPrompt';
 
 const Desktop = () => {
   const { windows, openWindow } = useWindow();
@@ -132,6 +133,8 @@ const Desktop = () => {
         return <MemoryManager />;
       case APP_TYPES.TASK_MANAGER:
         return <TaskManager />;
+      case APP_TYPES.COMMAND_PROMPT:
+        return <CommandPrompt />;
       default:
         return <div className="p-4 text-sm">Unknown App</div>;
     }
