@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSettings } from '../hooks/useOS';
+import DiskManagement from './DiskManagement';
 import '../styles/apps.css';
 
 /**
@@ -34,6 +35,12 @@ const Settings = () => {
           onClick={() => setActiveTab('system')}
         >
           ⚙️ System
+        </button>
+        <button
+          className={`settings-tab ${activeTab === 'storage' ? 'active' : ''}`}
+          onClick={() => setActiveTab('storage')}
+        >
+          💽 Storage
         </button>
         <button
           className={`settings-tab ${activeTab === 'about' ? 'active' : ''}`}
@@ -142,6 +149,13 @@ const Settings = () => {
                 <span>2 GB / 10 GB</span>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Storage Tab */}
+        {activeTab === 'storage' && (
+          <div className="h-full w-full overflow-hidden">
+            <DiskManagement />
           </div>
         )}
 
