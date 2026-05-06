@@ -11,7 +11,7 @@ const Window = ({ windowData, children }) => {
     updateWindowSize,
     minimizeWindow,
     maximizeWindow,
-    fullscreenWindow,
+    //fullscreenWindow,
     closeWindow,
   } = useWindow();
 

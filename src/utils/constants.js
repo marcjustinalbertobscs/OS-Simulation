@@ -16,6 +16,7 @@ export const APP_TYPES = {
   TASK_MANAGER: 'task-manager',
   WORD_PROCESSOR: 'word-processor',
   DISK_MANAGEMENT: 'disk-management',
+  COMMAND_PROMPT: 'command-prompt',
 };
 
 export const TASKBAR_HEIGHT = 48;
@@ -49,7 +50,7 @@ export const DEFAULT_FILESYSTEM_STATE = {
       name: 'C:\\Users\\Documents',
       parent: 'C:\\Users',
       type: 'folder',
-      children: ['System Notes.md', 'Architecture'],
+      children: ['System Notes.md', 'Architecture', 'Scripts'],
     },
     'C:\\Users\\Downloads': {
       name: 'C:\\Users\\Downloads',
@@ -68,6 +69,12 @@ export const DEFAULT_FILESYSTEM_STATE = {
       parent: 'C:\\Users\\Documents',
       type: 'folder',
       children: ['backend-plan.txt'],
+    },
+    'C:\\Users\\Documents\\Scripts': {
+      name: 'Scripts',
+      parent: 'C:\\Users\\Documents',
+      type: 'folder',
+      children: ['backup.bat', 'launch-apps.bat', 'network-check.bat', 'setup-workspace.bat'],
     },
     'C:\\Program Files': {
       name: 'C:\\Program Files',
@@ -133,6 +140,50 @@ export const DEFAULT_FILESYSTEM_STATE = {
       updatedAt: '2026-04-04T10:30:00.000Z',
       size: 77,
     },
+    'C:\\Users\\Documents\\Scripts\\backup.bat': {
+      name: 'backup.bat',
+      path: 'C:\\Users\\Documents\\Scripts\\backup.bat',
+      type: 'file',
+      parent: 'C:\\Users\\Documents\\Scripts',
+      content: 'rem Back up project notes\nmkdir C:\\Users\\Documents\\Backup\ncopy C:\\Users\\Desktop\\Project Brief.txt C:\\Users\\Documents\\Backup\necho Backup completed at %DATE% %TIME%',
+      createdAt: '2026-04-07T09:00:00.000Z',
+      modifiedAt: '2026-04-07T09:00:00.000Z',
+      updatedAt: '2026-04-07T09:00:00.000Z',
+      size: 156,
+    },
+    'C:\\Users\\Documents\\Scripts\\launch-apps.bat': {
+      name: 'launch-apps.bat',
+      path: 'C:\\Users\\Documents\\Scripts\\launch-apps.bat',
+      type: 'file',
+      parent: 'C:\\Users\\Documents\\Scripts',
+      content: 'rem Launch simulated applications\nstart notepad\nstart file-explorer\nstart task-manager\ntasklist',
+      createdAt: '2026-04-07T09:10:00.000Z',
+      modifiedAt: '2026-04-07T09:10:00.000Z',
+      updatedAt: '2026-04-07T09:10:00.000Z',
+      size: 86,
+    },
+    'C:\\Users\\Documents\\Scripts\\network-check.bat': {
+      name: 'network-check.bat',
+      path: 'C:\\Users\\Documents\\Scripts\\network-check.bat',
+      type: 'file',
+      parent: 'C:\\Users\\Documents\\Scripts',
+      content: 'rem Network diagnostic automation\nipconfig\nping gateway.local\nnetstat\nconnect fileserver.local 445',
+      createdAt: '2026-04-07T09:20:00.000Z',
+      modifiedAt: '2026-04-07T09:20:00.000Z',
+      updatedAt: '2026-04-07T09:20:00.000Z',
+      size: 91,
+    },
+    'C:\\Users\\Documents\\Scripts\\setup-workspace.bat': {
+      name: 'setup-workspace.bat',
+      path: 'C:\\Users\\Documents\\Scripts\\setup-workspace.bat',
+      type: 'file',
+      parent: 'C:\\Users\\Documents\\Scripts',
+      content: 'rem Create folders and reusable files\nset PROJECT=OSDemo\nmkdir C:\\Users\\Desktop\\%PROJECT%\nwrite C:\\Users\\Desktop\\%PROJECT%\\readme.txt Project workspace created\nif exist C:\\Users\\Desktop\\%PROJECT%\\readme.txt echo Workspace ready',
+      createdAt: '2026-04-07T09:30:00.000Z',
+      modifiedAt: '2026-04-07T09:30:00.000Z',
+      updatedAt: '2026-04-07T09:30:00.000Z',
+      size: 210,
+    },
     'C:\\Users\\Downloads\\installer.exe': {
       name: 'installer.exe',
       path: 'C:\\Users\\Downloads\\installer.exe',
@@ -169,6 +220,7 @@ export const PINNED_APPS = [
   { id: 'memory-manager', type: APP_TYPES.MEMORY_MANAGER, label: 'Memory Manager', icon: '💾' },
   { id: 'task-manager', type: APP_TYPES.TASK_MANAGER, label: 'Task Manager', icon: '📊' },
   { id: 'disk-management', type: APP_TYPES.DISK_MANAGEMENT, label: 'Disk Management', icon: '💽' },
+  { id: 'command-prompt', type: APP_TYPES.COMMAND_PROMPT, label: 'Command Prompt', icon: '>' },
 ];
 
 export const ALL_APPS = PINNED_APPS;
@@ -192,7 +244,9 @@ export const DEFAULT_WINDOW_POSITIONS = {
   'process-manager': { x: 50, y: 50, width: 900, height: 600 },
   'scheduler': { x: 80, y: 80, width: 950, height: 650 },
   'memory-manager': { x: 120, y: 120, width: 800, height: 550 },
+  'task-manager': { x: 140, y: 110, width: 980, height: 640 },
   'disk-management': { x: 180, y: 140, width: 700, height: 500 },
+  'command-prompt': { x: 180, y: 120, width: 860, height: 560 },
 };
 
 export const KEYBOARD_SHORTCUTS = {

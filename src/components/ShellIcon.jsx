@@ -147,6 +147,14 @@ const appIconMap = {
       <path d="M12 8a4 4 0 0 1 4 4" stroke="#9ca3af" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   ),
+  [APP_TYPES.COMMAND_PROMPT]: (
+    <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" aria-hidden="true">
+      <rect x="2.5" y="4" width="19" height="16" rx="2.5" fill="#111827" />
+      <path d="m6.5 9 3 3-3 3" stroke="#67e8f9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M11.5 15h5" stroke="#d1fae5" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M4.5 7h15" stroke="#374151" strokeWidth="1.2" />
+    </svg>
+  ),
 };
 
 export default function ShellIcon({ type, className = '' }) {
