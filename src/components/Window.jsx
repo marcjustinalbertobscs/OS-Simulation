@@ -175,7 +175,14 @@ const Window = ({ windowData, children }) => {
     width: windowData.isMaximized || windowData.isFullscreen ? '100vw' : `${windowData.width}px`,
     height: windowData.isFullscreen ? '100vh' : windowData.isMaximized ? `${window.innerHeight - TASKBAR_HEIGHT}px` : `${windowData.height}px`,
     zIndex: windowData.zIndex || 1000,
-    display: windowData.isMinimized ? 'none' : 'flex',
+    opacity: windowData.isMinimized ? 0 : 1,
+    visibility: windowData.isMinimized ? 'hidden' : 'visible',
+    pointerEvents: windowData.isMinimized ? 'none' : 'auto',
+    transform: windowData.isMinimized ? 'scale(0.8) translateY(60px)' : 'scale(1) translateY(0)',
+    transformOrigin: 'center bottom',
+    transition: isDragging || isResizing 
+      ? 'none' 
+      : 'transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.15), opacity 0.25s ease-out, visibility 0.45s, width 0.3s ease-out, height 0.3s ease-out, left 0.3s ease-out, top 0.3s ease-out',
   };
 
   const isFocused = focusedWindowId === windowData.id;
