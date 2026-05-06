@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useFileSystem } from '../hooks/useOS';
+import { useFileSystem, useWindow } from '../hooks/useOS';
+import { APP_TYPES } from '../utils/constants';
 import '../styles/apps.css';
 
 const ROOT_PATH = 'C:\\';
@@ -103,6 +104,7 @@ const FolderTreeNode = ({ node, currentPath, onNavigate, depth = 0 }) => {
 };
 
 const FileExplorer = () => {
+  const { openWindow } = useWindow();
   const {
     fileSystem,
     getDirectoryContents,
@@ -403,7 +405,7 @@ const FileExplorer = () => {
                   return (
                     <div
                       key={itemPath}
-                      className={`grid cursor-default grid-cols-[minmax(0,1fr)_140px_120px] items-center rounded-xl border px-3 py-2 text-sm transition ${
+                      className={`grid cursor-pointer grid-cols-[minmax(0,1fr)_140px_120px] items-center rounded-xl border px-3 py-2 text-sm transition ${
                         isSelected
                           ? 'border-[color-mix(in_srgb,var(--accent-color)_40%,transparent)] bg-[color-mix(in_srgb,var(--accent-color)_14%,transparent)]'
                           : 'border-transparent hover:bg-black/5 dark:hover:bg-white/5'
@@ -425,9 +427,18 @@ const FileExplorer = () => {
                         event.stopPropagation();
                         selectPath(itemPath, event);
                       }}
-                      onDoubleClick={() => {
+                      onDoubleClick={(event) => {
+                        event.stopPropagation();
                         if (isFolder) {
                           openFolder(itemPath);
+                        } else {
+                          const extension = item.name.split('.').pop().toLowerCase();
+                          if (extension === 'docx') {
+                            openWindow(APP_TYPES.WORD_PROCESSOR, itemPath);
+                          } else {
+                            // Default to Notepad for txt, md, and others
+                            openWindow(APP_TYPES.NOTEPAD, itemPath);
+                          }
                         }
                       }}
                       onContextMenu={(event) => openContextMenu(event, itemPath, isFolder ? itemPath : currentPath)}

@@ -6,8 +6,8 @@ import '../styles/apps.css';
  * Word Processor App - MS Word Simulation
  */
 
-const WordProcessor = () => {
-  const { createFile, updateFileContent, getDirectoryContents } = useFileSystem();
+const WordProcessor = ({ initialFilePath }) => {
+  const { createFile, updateFileContent, getDirectoryContents, getFile } = useFileSystem();
   const [content, setContent] = useState('');
   const [currentFile, setCurrentFile] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -17,6 +17,21 @@ const WordProcessor = () => {
   const [showPrintQueue, setShowPrintQueue] = useState(false);
   const [fileName, setFileName] = useState('Document1.docx');
   const [currentFolder, setCurrentFolder] = useState('C:\\Users\\Documents');
+
+  // Load initial file if provided
+  useEffect(() => {
+    if (initialFilePath && initialFilePath !== 'word_processor') {
+      const file = getFile(initialFilePath);
+      if (file) {
+        setContent(file.content || '');
+        setCurrentFile(file.path);
+        setFileName(file.name);
+        setCurrentFolder(file.parent);
+        setIsDirty(false);
+      }
+    }
+  }, [initialFilePath, getFile]);
+
   const [printQueue, setPrintQueue] = useState([]);
   const [printSettings, setPrintSettings] = useState({
     copies: 1,

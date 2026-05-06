@@ -15,6 +15,7 @@ export const APP_TYPES = {
   MEMORY_MANAGER: 'memory-manager',
   TASK_MANAGER: 'task-manager',
   WORD_PROCESSOR: 'word-processor',
+  DISK_MANAGEMENT: 'disk-management',
   COMMAND_PROMPT: 'command-prompt',
 };
 
@@ -218,6 +219,7 @@ export const PINNED_APPS = [
   { id: 'scheduler', type: APP_TYPES.SCHEDULER, label: 'CPU Scheduler', icon: '⏱️' },
   { id: 'memory-manager', type: APP_TYPES.MEMORY_MANAGER, label: 'Memory Manager', icon: '💾' },
   { id: 'task-manager', type: APP_TYPES.TASK_MANAGER, label: 'Task Manager', icon: '📊' },
+  { id: 'disk-management', type: APP_TYPES.DISK_MANAGEMENT, label: 'Disk Management', icon: '💽' },
   { id: 'command-prompt', type: APP_TYPES.COMMAND_PROMPT, label: 'Command Prompt', icon: '>' },
 ];
 
@@ -243,6 +245,7 @@ export const DEFAULT_WINDOW_POSITIONS = {
   'scheduler': { x: 80, y: 80, width: 950, height: 650 },
   'memory-manager': { x: 120, y: 120, width: 800, height: 550 },
   'task-manager': { x: 140, y: 110, width: 980, height: 640 },
+  'disk-management': { x: 180, y: 140, width: 700, height: 500 },
   'command-prompt': { x: 180, y: 120, width: 860, height: 560 },
 };
 

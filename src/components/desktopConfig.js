@@ -11,6 +11,7 @@ const desktopOrder = [
   APP_TYPES.SCHEDULER,
   APP_TYPES.MEMORY_MANAGER,
   APP_TYPES.TASK_MANAGER,
+  APP_TYPES.DISK_MANAGEMENT,
 ];
 
 export const desktopApps = desktopOrder

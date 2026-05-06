@@ -17,6 +17,7 @@ import ProcessManager from '../apps/ProcessManager';
 import Scheduler from '../apps/Scheduler';
 import MemoryManager from '../apps/MemoryManager';
 import TaskManager from '../apps/TaskManager';
+import DiskManagement from '../apps/DiskManagement';
 import CommandPrompt from '../apps/CommandPrompt';
 
 const Desktop = () => {
@@ -118,9 +119,10 @@ const Desktop = () => {
       case APP_TYPES.FILE_EXPLORER:
         return <FileExplorer />;
       case APP_TYPES.NOTEPAD:
-        return <Notepad />;
+        // We pass the appId as initialFilePath since that's what FileExplorer sends to openWindow
+        return <Notepad initialFilePath={windowData.appId} />;
       case APP_TYPES.WORD_PROCESSOR:
-        return <WordProcessor />;
+        return <WordProcessor initialFilePath={windowData.appId} />;
       case APP_TYPES.CALCULATOR:
         return <Calculator />;
       case APP_TYPES.SETTINGS:
@@ -133,6 +135,8 @@ const Desktop = () => {
         return <MemoryManager />;
       case APP_TYPES.TASK_MANAGER:
         return <TaskManager />;
+      case APP_TYPES.DISK_MANAGEMENT:
+        return <DiskManagement />;
       case APP_TYPES.COMMAND_PROMPT:
         return <CommandPrompt />;
       default:
