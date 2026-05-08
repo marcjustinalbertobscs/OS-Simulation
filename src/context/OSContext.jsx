@@ -124,7 +124,7 @@ const ioReducer = (state, action) => {
     case 'START_NEXT_JOB':
       return ioActions.startNextJob(state);
     case 'COMPLETE_CURRENT_JOB':
-      return ioActions.completeCurrentJob(state);
+      return ioActions.completeAndAdvance(state);
     case 'CANCEL_PRINT_JOB':
       return ioActions.cancelJob(state, action.payload);
     case 'RESET_IO':
@@ -450,15 +450,40 @@ export const OSProvider = ({ children }) => {
   // I/O operations
   const submitPrintJob = useCallback((job) => {
     ioDispatch({ type: 'SUBMIT_PRINT_JOB', payload: job });
+    processDispatch({ type: 'UPDATE_PROCESS_STATE', payload: { processId: job.processId, state: 'Waiting' } });
   }, []);
 
   const startNextJob = useCallback(() => {
+    const nextJob = ioActions.getQueuedJobs(ioState)[0];
     ioDispatch({ type: 'START_NEXT_JOB' });
-  }, []);
+    if (nextJob) {
+      processDispatch({
+        type: 'UPDATE_PROCESS_STATE',
+        payload: { processId: nextJob.processId, state: 'Running' },
+      });
+    }
+  }, [ioState]);
 
   const completeCurrentJob = useCallback(() => {
+    const activeJob = ioActions.getActiveJob(ioState);
+    const nextJob = ioActions.getQueuedJobs(ioState)[0];
     ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
-  }, []);
+    if (activeJob) {
+      processDispatch({
+        type: 'UPDATE_PROCESS_STATE',
+        payload: {
+          processId: activeJob.processId,
+          state: 'Ready',
+        },
+      });
+    }
+    if (nextJob) {
+      processDispatch({
+        type: 'UPDATE_PROCESS_STATE',
+        payload: { processId: nextJob.processId, state: 'Running' },
+      });
+    }
+  }, [ioState]);
 
   const cancelPrintJob = useCallback((jobId) => {
     ioDispatch({ type: 'CANCEL_PRINT_JOB', payload: jobId });
@@ -471,6 +496,7 @@ export const OSProvider = ({ children }) => {
   const getQueuedJobs = useCallback(() => ioActions.getQueuedJobs(ioState), [ioState]);
   const getCompletedJobs = useCallback(() => ioActions.getCompletedJobs(ioState), [ioState]);
   const getActiveJob = useCallback(() => ioActions.getActiveJob(ioState), [ioState]);
+  const getIOEvents = useCallback(() => ioActions.getEvents(ioState), [ioState]);
 
   const value = {
     // Window state & operations
@@ -547,6 +573,7 @@ export const OSProvider = ({ children }) => {
     getQueuedJobs,
     getCompletedJobs,
     getActiveJob,
+    getIOEvents,
   };
 
   return <OSContext.Provider value={value}>{children}</OSContext.Provider>;

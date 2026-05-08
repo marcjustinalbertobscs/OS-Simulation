@@ -14,6 +14,13 @@ const createJob = ({ id, processId, documentName, pages, notes = '' }) => ({
   completedAt: null,
 });
 
+const createEvent = (message, type = 'info') => ({
+  id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+  message,
+  type,
+  timestamp: new Date().toISOString(),
+});
+
 export const ioActions = {
   initState: () => ({
     printerStatus: 'Idle',
@@ -25,6 +32,7 @@ export const ioActions = {
       createJob({ id: 'J3', processId: 'P3', documentName: 'backup-log.txt', pages: 1, notes: 'Low priority' }),
     ],
     history: [],
+    events: [createEvent('Printer spooler initialized', 'system')],
   }),
 
   submitPrintJob: (state, { processId, documentName, pages, notes = '' }) => {
@@ -40,6 +48,10 @@ export const ioActions = {
       ...state,
       jobs: [...state.jobs, { ...nextJob, submittedAt: new Date().toISOString() }],
       nextJobCounter: state.nextJobCounter + 1,
+      events: [
+        ...state.events,
+        createEvent(`${processId} queued ${documentName} (${pages} page${pages === 1 ? '' : 's'})`, 'info'),
+      ],
     };
   },
 
@@ -62,7 +74,8 @@ export const ioActions = {
         job.id === nextJob.id
           ? { ...job, status: 'Printing', startedAt: new Date().toISOString() }
           : job
-      ),
+        ),
+      events: [...state.events, createEvent(`${nextJob.id} started on printer`, 'success')],
     };
   },
 
@@ -91,7 +104,15 @@ export const ioActions = {
             },
           ]
         : state.history,
+      events: completedJob
+        ? [...state.events, createEvent(`${completedJob.id} completed printing`, 'success')]
+        : state.events,
     };
+  },
+
+  completeAndAdvance: (state) => {
+    const completedState = ioActions.completeCurrentJob(state);
+    return ioActions.startNextJob(completedState);
   },
 
   cancelJob: (state, jobId) => {
@@ -103,6 +124,7 @@ export const ioActions = {
     return {
       ...state,
       jobs: state.jobs.filter((entry) => entry.id !== jobId),
+      events: [...state.events, createEvent(`${jobId} was canceled`, 'warning')],
     };
   },
 
@@ -111,4 +133,5 @@ export const ioActions = {
   getQueuedJobs: (state) => state.jobs.filter((job) => job.status === 'Queued'),
   getCompletedJobs: (state) => state.history,
   getActiveJob: (state) => state.jobs.find((job) => job.id === state.currentJobId) || null,
+  getEvents: (state) => state.events,
 };

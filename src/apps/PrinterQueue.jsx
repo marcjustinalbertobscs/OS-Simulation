@@ -13,6 +13,7 @@ const PrinterQueue = () => {
     getQueuedJobs,
     getCompletedJobs,
     getActiveJob,
+    getIOEvents,
   } = useOS();
 
   const [processId, setProcessId] = useState('P1');
@@ -23,6 +24,7 @@ const PrinterQueue = () => {
   const queuedJobs = getQueuedJobs();
   const completedJobs = getCompletedJobs();
   const activeJob = getActiveJob();
+  const events = getIOEvents();
 
   const handleSubmit = () => {
     if (!documentName.trim()) return;
@@ -30,6 +32,12 @@ const PrinterQueue = () => {
     setDocumentName('');
     setNotes('');
     setPages(1);
+  };
+
+  const getStatusClass = (status) => {
+    if (status === 'Printing') return 'io-status io-status-active';
+    if (status === 'Completed') return 'io-status io-status-complete';
+    return 'io-status io-status-queued';
   };
 
   return (
@@ -66,10 +74,10 @@ const PrinterQueue = () => {
               Pages
               <input type="number" min="1" value={pages} onChange={(e) => setPages(e.target.value)} />
             </label>
-            <label>
-              Notes
-              <input value={notes} onChange={(e) => setNotes(e.target.value)} />
-            </label>
+              <label>
+                Notes
+                <input value={notes} onChange={(e) => setNotes(e.target.value)} />
+              </label>
             <button className="btn btn-primary" onClick={handleSubmit}>Queue Job</button>
           </div>
         </section>
@@ -77,7 +85,7 @@ const PrinterQueue = () => {
         <section className="io-panel">
           <h3>Printer Status</h3>
           <div className="printer-card">
-            <div><strong>Status:</strong> {ioState.printerStatus}</div>
+            <div><strong>Status:</strong> <span className={getStatusClass(ioState.printerStatus)}>{ioState.printerStatus}</span></div>
             <div><strong>Active Job:</strong> {activeJob ? `${activeJob.id} - ${activeJob.documentName}` : 'None'}</div>
             <div><strong>Queued Jobs:</strong> {queuedJobs.length}</div>
           </div>
@@ -100,7 +108,7 @@ const PrinterQueue = () => {
                   <td>{job.processId}</td>
                   <td>{job.documentName}</td>
                   <td>{job.pages}</td>
-                  <td>{job.status}</td>
+                  <td><span className={getStatusClass(job.status)}>{job.status}</span></td>
                   <td>
                     <button
                       className="btn btn-sm btn-danger"
@@ -118,6 +126,20 @@ const PrinterQueue = () => {
       </div>
 
       <section className="io-panel">
+        <h3>Event Log</h3>
+        {events.length > 0 ? (
+          <ul className="io-history">
+            {events.map((event) => (
+              <li key={event.id} className={`io-event io-event-${event.type}`}>
+                <span>{event.message}</span>
+                <span className="io-event-time">{new Date(event.timestamp).toLocaleTimeString()}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="io-empty">No printer activity yet.</p>
+        )}
+
         <h3>Completed Jobs</h3>
         {completedJobs.length > 0 ? (
           <ul className="io-history">
