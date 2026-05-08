@@ -8,6 +8,7 @@ const desktopOrder = [
   APP_TYPES.SETTINGS,
   APP_TYPES.COMMAND_PROMPT,
   APP_TYPES.TASK_MANAGER,
+  APP_TYPES.PRINTER_QUEUE,
 ];
 
 export const desktopApps = desktopOrder

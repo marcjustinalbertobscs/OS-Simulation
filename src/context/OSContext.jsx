@@ -5,6 +5,7 @@ import { fileSystemActions } from '../store/fileSystemStore';
 import { processActions } from '../store/processStore';
 import { memoryActions } from '../store/memoryStore';
 import { schedulerActions } from '../store/schedulerStore';
+import { ioActions } from '../store/ioStore';
 import { persistenceService, throttle } from '../utils/persistence';
 import { DEFAULT_ACCENT_COLOR } from '../utils/constants';
 import { fileSystemApi } from '../utils/fileSystemApi';
@@ -114,12 +115,32 @@ const schedulerReducer = (state, action) => {
   }
 };
 
+const ioReducer = (state, action) => {
+  switch (action.type) {
+    case 'INIT_IO':
+      return ioActions.initState();
+    case 'SUBMIT_PRINT_JOB':
+      return ioActions.submitPrintJob(state, action.payload);
+    case 'START_NEXT_JOB':
+      return ioActions.startNextJob(state);
+    case 'COMPLETE_CURRENT_JOB':
+      return ioActions.completeCurrentJob(state);
+    case 'CANCEL_PRINT_JOB':
+      return ioActions.cancelJob(state, action.payload);
+    case 'RESET_IO':
+      return ioActions.resetIO();
+    default:
+      return state;
+  }
+};
+
 export const OSProvider = ({ children }) => {
   const [windowState, windowDispatch] = useReducer(windowReducer, windowActions.initState());
   const [fileSystemState, fileSystemDispatch] = useReducer(fileSystemReducer, fileSystemActions.initState());
   const [processState, processDispatch] = useReducer(processReducer, processActions.initState());
   const [memoryState, memoryDispatch] = useReducer(memoryReducer, memoryActions.initState());
   const [schedulerState, schedulerDispatch] = useReducer(schedulerReducer, schedulerActions.initState());
+  const [ioState, ioDispatch] = useReducer(ioReducer, ioActions.initState());
   const [isDarkMode, setIsDarkModeState] = React.useState(() => persistenceService.loadDarkMode());
   const [accentColor, setAccentColorState] = React.useState(() => persistenceService.loadAccentColor());
 
@@ -426,6 +447,31 @@ export const OSProvider = ({ children }) => {
     schedulerDispatch({ type: 'RESET_SCHEDULER' });
   }, []);
 
+  // I/O operations
+  const submitPrintJob = useCallback((job) => {
+    ioDispatch({ type: 'SUBMIT_PRINT_JOB', payload: job });
+  }, []);
+
+  const startNextJob = useCallback(() => {
+    ioDispatch({ type: 'START_NEXT_JOB' });
+  }, []);
+
+  const completeCurrentJob = useCallback(() => {
+    ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
+  }, []);
+
+  const cancelPrintJob = useCallback((jobId) => {
+    ioDispatch({ type: 'CANCEL_PRINT_JOB', payload: jobId });
+  }, []);
+
+  const resetIO = useCallback(() => {
+    ioDispatch({ type: 'RESET_IO' });
+  }, []);
+
+  const getQueuedJobs = useCallback(() => ioActions.getQueuedJobs(ioState), [ioState]);
+  const getCompletedJobs = useCallback(() => ioActions.getCompletedJobs(ioState), [ioState]);
+  const getActiveJob = useCallback(() => ioActions.getActiveJob(ioState), [ioState]);
+
   const value = {
     // Window state & operations
     windowState,
@@ -490,6 +536,17 @@ export const OSProvider = ({ children }) => {
     getSchedule,
     generateGanttChart,
     resetScheduler,
+
+    // I/O state & operations
+    ioState,
+    submitPrintJob,
+    startNextJob,
+    completeCurrentJob,
+    cancelPrintJob,
+    resetIO,
+    getQueuedJobs,
+    getCompletedJobs,
+    getActiveJob,
   };
 
   return <OSContext.Provider value={value}>{children}</OSContext.Provider>;

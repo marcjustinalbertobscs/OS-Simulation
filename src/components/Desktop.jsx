@@ -16,6 +16,7 @@ import Settings from '../apps/Settings';
 import ProcessManager from '../apps/ProcessManager';
 import Scheduler from '../apps/Scheduler';
 import MemoryManager from '../apps/MemoryManager';
+import PrinterQueue from '../apps/PrinterQueue';
 import TaskManager from '../apps/TaskManager';
 import DiskManagement from '../apps/DiskManagement';
 import CommandPrompt from '../apps/CommandPrompt';
@@ -133,6 +134,8 @@ const Desktop = () => {
         return <Scheduler />;
       case APP_TYPES.MEMORY_MANAGER:
         return <MemoryManager />;
+      case APP_TYPES.PRINTER_QUEUE:
+        return <PrinterQueue />;
       case APP_TYPES.TASK_MANAGER:
         return <TaskManager />;
       case APP_TYPES.DISK_MANAGEMENT:
