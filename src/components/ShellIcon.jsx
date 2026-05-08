@@ -125,6 +125,15 @@ const appIconMap = {
       <path d="M8 5v2M12 5v2M16 5v2M8 17v2M12 17v2M16 17v2" stroke="#1f7a3f" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   ),
+  [APP_TYPES.PRINTER_QUEUE]: (
+    <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" aria-hidden="true">
+      <rect x="6" y="3" width="12" height="6" rx="1.5" fill="#cbd5e1" />
+      <rect x="5" y="9" width="14" height="7" rx="2" fill="#94a3b8" />
+      <rect x="7" y="13" width="10" height="8" rx="1.5" fill="#ffffff" />
+      <path d="M9 16h6M9 18h4" stroke="#475569" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="17" cy="12" r="1" fill="#22c55e" />
+    </svg>
+  ),
   [APP_TYPES.TASK_MANAGER]: (
     <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" aria-hidden="true">
       <rect x="3" y="3" width="18" height="18" rx="2" fill="#e5e7eb" />

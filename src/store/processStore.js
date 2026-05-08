@@ -74,7 +74,13 @@ export const processActions = {
     return {
       ...state,
       processes: state.processes.map((p) =>
-        p.id === processId ? { ...p, state: newState } : p
+        p.id === processId
+          ? {
+              ...p,
+              state: newState,
+              endTime: newState === 'Terminated' ? Date.now() / 1000 : p.endTime,
+            }
+          : p
       ),
     };
   },

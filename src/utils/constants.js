@@ -216,6 +216,7 @@ export const PINNED_APPS = [
   { id: 'calculator', type: APP_TYPES.CALCULATOR, label: 'Calculator', icon: '🧮' },
   { id: 'settings', type: APP_TYPES.SETTINGS, label: 'Settings', icon: '⚙️' },
   { id: 'task-manager', type: APP_TYPES.TASK_MANAGER, label: 'Task Manager', icon: '📊' },
+  { id: 'printer-queue', type: APP_TYPES.PRINTER_QUEUE, label: 'Printer Queue', icon: '🖨️' },
 ];
 
 export const ALL_APPS = [

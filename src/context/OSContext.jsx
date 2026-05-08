@@ -5,6 +5,7 @@ import { fileSystemActions } from '../store/fileSystemStore';
 import { processActions } from '../store/processStore';
 import { memoryActions } from '../store/memoryStore';
 import { schedulerActions } from '../store/schedulerStore';
+import { ioActions } from '../store/ioStore';
 import { persistenceService, throttle } from '../utils/persistence';
 import { DEFAULT_ACCENT_COLOR } from '../utils/constants';
 import { fileSystemApi } from '../utils/fileSystemApi';
@@ -114,12 +115,34 @@ const schedulerReducer = (state, action) => {
   }
 };
 
+const ioReducer = (state, action) => {
+  switch (action.type) {
+    case 'INIT_IO':
+      return ioActions.initState();
+    case 'SUBMIT_PRINT_JOB':
+      return ioActions.submitPrintJob(state, action.payload);
+    case 'START_NEXT_JOB':
+      return ioActions.startNextJob(state);
+    case 'ADVANCE_CURRENT_JOB':
+      return ioActions.advanceCurrentJob(state, action.payload.jobId, action.payload.progress);
+    case 'COMPLETE_CURRENT_JOB':
+      return ioActions.completeAndAdvance(state);
+    case 'CANCEL_PRINT_JOB':
+      return ioActions.cancelJob(state, action.payload);
+    case 'RESET_IO':
+      return ioActions.resetIO();
+    default:
+      return state;
+  }
+};
+
 export const OSProvider = ({ children }) => {
   const [windowState, windowDispatch] = useReducer(windowReducer, windowActions.initState());
   const [fileSystemState, fileSystemDispatch] = useReducer(fileSystemReducer, fileSystemActions.initState());
   const [processState, processDispatch] = useReducer(processReducer, processActions.initState());
   const [memoryState, memoryDispatch] = useReducer(memoryReducer, memoryActions.initState());
   const [schedulerState, schedulerDispatch] = useReducer(schedulerReducer, schedulerActions.initState());
+  const [ioState, ioDispatch] = useReducer(ioReducer, ioActions.initState());
   const [isDarkMode, setIsDarkModeState] = React.useState(() => persistenceService.loadDarkMode());
   const [accentColor, setAccentColorState] = React.useState(() => persistenceService.loadAccentColor());
 
@@ -426,6 +449,79 @@ export const OSProvider = ({ children }) => {
     schedulerDispatch({ type: 'RESET_SCHEDULER' });
   }, []);
 
+  // I/O operations
+  const submitPrintJob = useCallback((job) => {
+    ioDispatch({ type: 'SUBMIT_PRINT_JOB', payload: job });
+    processDispatch({ type: 'UPDATE_PROCESS_STATE', payload: { processId: job.processId, state: 'Waiting' } });
+  }, []);
+
+  const startNextJob = useCallback(() => {
+    const nextJob = ioActions.getQueuedJobs(ioState)[0];
+    ioDispatch({ type: 'START_NEXT_JOB' });
+    if (nextJob) {
+      processDispatch({
+        type: 'UPDATE_PROCESS_STATE',
+        payload: { processId: nextJob.processId, state: 'Running' },
+      });
+    }
+  }, [ioState]);
+
+  const completeCurrentJob = useCallback(() => {
+    const activeJob = ioActions.getActiveJob(ioState);
+    ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
+    if (activeJob) {
+      processDispatch({
+        type: 'UPDATE_PROCESS_STATE',
+        payload: {
+          processId: activeJob.processId,
+          state: 'Ready',
+        },
+      });
+    }
+  }, [ioState]);
+
+  const cancelPrintJob = useCallback((jobId) => {
+    ioDispatch({ type: 'CANCEL_PRINT_JOB', payload: jobId });
+  }, []);
+
+  const resetIO = useCallback(() => {
+    ioDispatch({ type: 'RESET_IO' });
+  }, []);
+
+  const getQueuedJobs = useCallback(() => ioActions.getQueuedJobs(ioState), [ioState]);
+  const getCompletedJobs = useCallback(() => ioActions.getCompletedJobs(ioState), [ioState]);
+  const getActiveJob = useCallback(() => ioActions.getActiveJob(ioState), [ioState]);
+  const getIOEvents = useCallback(() => ioActions.getEvents(ioState), [ioState]);
+  const getPrinterMetrics = useCallback(() => ioActions.getPrinterMetrics(ioState), [ioState]);
+
+  useEffect(() => {
+    const activeJob = ioActions.getActiveJob(ioState);
+    if (!activeJob) return undefined;
+
+    const tickMs = Math.max(400, activeJob.pages * 300);
+    const interval = window.setInterval(() => {
+      const current = ioActions.getActiveJob(ioState);
+      if (!current) return;
+
+      const nextProgress = Math.min(100, current.progress + Math.ceil(100 / current.estimatedTicks));
+      ioDispatch({
+        type: 'ADVANCE_CURRENT_JOB',
+        payload: { jobId: current.id, progress: nextProgress },
+      });
+
+      if (nextProgress >= 100) {
+        ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
+
+        processDispatch({
+          type: 'UPDATE_PROCESS_STATE',
+          payload: { processId: current.processId, state: 'Ready' },
+        });
+      }
+    }, tickMs);
+
+    return () => window.clearInterval(interval);
+  }, [ioState, processDispatch]);
+
   const value = {
     // Window state & operations
     windowState,
@@ -490,6 +586,19 @@ export const OSProvider = ({ children }) => {
     getSchedule,
     generateGanttChart,
     resetScheduler,
+
+    // I/O state & operations
+    ioState,
+    submitPrintJob,
+    startNextJob,
+    completeCurrentJob,
+    cancelPrintJob,
+    resetIO,
+    getQueuedJobs,
+    getCompletedJobs,
+    getActiveJob,
+    getIOEvents,
+    getPrinterMetrics,
   };
 
   return <OSContext.Provider value={value}>{children}</OSContext.Provider>;
