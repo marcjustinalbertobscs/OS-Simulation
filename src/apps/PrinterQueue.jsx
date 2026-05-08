@@ -21,6 +21,7 @@ const PrinterQueue = () => {
   const [documentName, setDocumentName] = useState('memo.txt');
   const [pages, setPages] = useState(1);
   const [notes, setNotes] = useState('');
+  const [activeTab, setActiveTab] = useState('queue');
 
   const queuedJobs = getQueuedJobs();
   const completedJobs = getCompletedJobs();
@@ -41,8 +42,6 @@ const PrinterQueue = () => {
     if (status === 'Completed') return 'io-status io-status-complete';
     if (status === 'Busy') return 'io-status io-status-active';
     if (status === 'Spooling') return 'io-status io-status-spooling';
-    if (status === 'page') return 'io-event-badge io-event-page';
-    if (status === 'sound') return 'io-event-badge io-event-sound';
     return 'io-status io-status-queued';
   };
 
@@ -54,7 +53,6 @@ const PrinterQueue = () => {
       <div className="io-header">
         <div>
           <h2>Printer Spooler</h2>
-          <p>Queued jobs wait until the printer is free.</p>
         </div>
         <div className="io-controls">
           <button className="btn btn-primary" onClick={startNextJob}>Start Next Job</button>
@@ -63,81 +61,53 @@ const PrinterQueue = () => {
         </div>
       </div>
 
-      <div className="io-layout">
-        <section className="io-panel io-panel-compact io-submit-panel">
-          <div className="panel-title-row">
-            <div>
-              <h3>Submit Print Job</h3>
-              <p>Queue a document for the printer spooler.</p>
-            </div>
-          </div>
-          <div className="io-form io-form-tight">
-            <label>
-              Process
-              <select value={processId} onChange={(e) => setProcessId(e.target.value)}>
-                <option value="P1">P1</option>
-                <option value="P2">P2</option>
-                <option value="P3">P3</option>
-              </select>
-            </label>
-            <label>
-              Document
-              <input value={documentName} onChange={(e) => setDocumentName(e.target.value)} />
-            </label>
-            <label>
-              Pages
-              <input type="number" min="1" value={pages} onChange={(e) => setPages(e.target.value)} />
-            </label>
-            <label>
-              Notes
-              <input value={notes} onChange={(e) => setNotes(e.target.value)} />
-            </label>
-            <button className="btn btn-primary" onClick={handleSubmit}>Queue Job</button>
-          </div>
-        </section>
-
-        <section className="io-panel io-device-panel">
-          <div className="panel-title-row">
-            <div>
+      {/* Main Layout: Sidebar + Tabbed Panel */}
+      <div className="io-main-layout">
+        
+        {/* LEFT SIDEBAR: Printer Device & Progress (Merged) */}
+        <aside className="io-sidebar">
+          <section className="io-panel io-device-panel-merged">
+            <div className="panel-title-row">
               <h3>Printer Device</h3>
-              <p>Live device state and paper tray animation.</p>
+              <span className={getStatusClass(metrics.deviceStatus)}>{metrics.deviceStatus}</span>
             </div>
-            <span className={getStatusClass(metrics.deviceStatus)}>{metrics.deviceStatus}</span>
-          </div>
 
-          <div className="printer-stage">
-            <div className="printer-shell">
-              <div className="printer-top">
-                <div className="printer-led" />
-                <div className="printer-label">OfficeJet Spooler</div>
-              </div>
-
-              <div className="paper-tray">
-                <div className="tray-slot">
-                  <div className={`paper-sheet ${metrics.activeJob ? 'printing' : ''}`}>
-                    <div className="paper-lines">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                    {metrics.activeJob && (
-                      <div className="paper-progress">
-                        <div className="paper-progress-fill" style={{ width: `${progressValue}%` }} />
-                      </div>
-                    )}
-                  </div>
+            {/* Printer Device */}
+            <div className="printer-stage">
+              <div className="printer-shell">
+                <div className="printer-top">
+                  <div className="printer-led" />
+                  <div className="printer-label">OfficeJet Spooler</div>
                 </div>
-                <div className="tray-base" />
-              </div>
 
-              <div className="printer-meta">
-                <div><strong>Active:</strong> {activeJob ? `${activeJob.id} ${activeJob.documentName}` : 'None'}</div>
-                <div><strong>Queue:</strong> {queuedJobs.length}</div>
-                <div><strong>Completed:</strong> {completedJobs.length}</div>
-                <div><strong>Page:</strong> {metrics.activeJob ? `${currentPage}/${metrics.activeJob.pages}` : '-'}</div>
+                <div className="paper-tray">
+                  <div className="tray-slot">
+                    <div className={`paper-sheet ${metrics.activeJob ? 'printing' : ''}`}>
+                      <div className="paper-lines">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                      {metrics.activeJob && (
+                        <div className="paper-progress">
+                          <div className="paper-progress-fill" style={{ width: `${progressValue}%` }} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="tray-base" />
+                </div>
+
+                <div className="printer-meta">
+                  <div><strong>Active:</strong> {activeJob ? `${activeJob.id} ${activeJob.documentName}` : 'None'}</div>
+                  <div><strong>Queue:</strong> {queuedJobs.length}</div>
+                  <div><strong>Completed:</strong> {completedJobs.length}</div>
+                  <div><strong>Page:</strong> {metrics.activeJob ? `${currentPage}/${metrics.activeJob.pages}` : '-'}</div>
+                </div>
               </div>
             </div>
 
+            {/* Progress Bar & Page Strip */}
             <div className="io-progress-wrap">
               <div className="io-progress-label">
                 <span>Print Progress</span>
@@ -165,86 +135,152 @@ const PrinterQueue = () => {
                 {metrics.activeJob ? `Printing page ${currentPage} of ${metrics.activeJob.pages}` : 'No page currently printing'}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </aside>
 
-        <section className="io-panel io-queue-panel">
-          <div className="panel-title-row">
-            <div>
-              <h3>Spool Queue</h3>
-              <p>FIFO print jobs and their live page progress.</p>
-            </div>
+        {/* RIGHT PANEL: Tabbed Interface */}
+        <section className="io-panel io-tabbed-panel">
+          {/* Tab Headers */}
+          <div className="io-tabs-header">
+            <button
+              className={`io-tab-button ${activeTab === 'queue' ? 'active' : ''}`}
+              onClick={() => setActiveTab('queue')}
+            >
+              Spool Queue
+            </button>
+            <button
+              className={`io-tab-button ${activeTab === 'logs' ? 'active' : ''}`}
+              onClick={() => setActiveTab('logs')}
+            >
+              Event Log
+            </button>
           </div>
-          <table className="io-table">
-            <thead>
-              <tr>
-                <th>Job</th>
-                <th>Process</th>
-                <th>Document</th>
-                <th>Pages</th>
-                <th>Status</th>
-                <th>Progress</th>
-                <th>Printed</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ioState.jobs.map((job) => (
-                <tr key={job.id}>
-                  <td>{job.id}</td>
-                  <td>{job.processId}</td>
-                  <td>{job.documentName}</td>
-                  <td>{job.pages}</td>
-                  <td><span className={getStatusClass(job.status)}>{job.status}</span></td>
-                  <td>{job.progress}%</td>
-                  <td>{job.pagesPrinted}/{job.pages}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      disabled={job.status === 'Printing' || job.status === 'Completed'}
-                      onClick={() => cancelPrintJob(job.id)}
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+          {/* Tab Content */}
+          <div className="io-tabs-content">
+            
+            {/* Tab 1: Spool Queue & Submit Form */}
+            {activeTab === 'queue' && (
+              <div className="io-tab-pane io-tab-pane-queue">
+                <h3>Spool Queue</h3>
+                <div className="io-queue-wrapper">
+                  <table className="io-table">
+                    <thead>
+                      <tr>
+                        <th>Pos</th>
+                        <th>Job</th>
+                        <th>Document</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ioState.jobs.map((job, index) => (
+                        <tr key={job.id}>
+                          <td>
+                            <span className="io-queue-pos">#{index + 1}</span>
+                          </td>
+                          <td>{job.id}</td>
+                          <td>
+                            <div className="io-doc-cell" title={job.documentName}>{job.documentName}</div>
+                            <div className="io-doc-meta">{job.processId} · {job.pagesPrinted}/{job.pages} pages</div>
+                          </td>
+                          <td><span className={getStatusClass(job.status)}>{job.status}</span></td>
+                          <td>
+                            <div className="io-cell-progress">
+                              <div className="io-cell-progress-bar">
+                                <div className="io-cell-progress-fill" style={{ width: `${job.progress}%` }} />
+                              </div>
+                              <span>{job.progress}%</span>
+                            </div>
+                          </td>
+                          <td>
+                            <button
+                              className="io-action-btn"
+                              disabled={job.status === 'Printing' || job.status === 'Completed'}
+                              onClick={() => cancelPrintJob(job.id)}
+                              title={`Cancel ${job.id}`}
+                              aria-label={`Cancel ${job.id}`}
+                            >
+                              x
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {ioState.jobs.length === 0 && (
+                    <p className="io-empty">No jobs in queue. Submit a print job to get started.</p>
+                  )}
+                </div>
+
+                {/* Submit Form */}
+                <div className="io-submit-form-wrapper">
+                  <h4>Submit Print Job</h4>
+                  <div className="io-form io-form-horizontal">
+                    <label>
+                      Process
+                      <select value={processId} onChange={(e) => setProcessId(e.target.value)}>
+                        <option value="P1">P1</option>
+                        <option value="P2">P2</option>
+                        <option value="P3">P3</option>
+                      </select>
+                    </label>
+                    <label>
+                      Document
+                      <input value={documentName} onChange={(e) => setDocumentName(e.target.value)} />
+                    </label>
+                    <label>
+                      Pages
+                      <input type="number" min="1" value={pages} onChange={(e) => setPages(e.target.value)} />
+                    </label>
+                    <label>
+                      Notes
+                      <input value={notes} onChange={(e) => setNotes(e.target.value)} />
+                    </label>
+                    <button className="btn btn-primary btn-submit" onClick={handleSubmit}>Queue Job</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Event Log */}
+            {activeTab === 'logs' && (
+              <div className="io-tab-pane io-tab-pane-logs">
+                <h3>Event Log</h3>
+                <div className="io-log-wrapper">
+                  {events.length > 0 ? (
+                    <ul className="io-history">
+                      {events.map((event) => (
+                        <li key={event.id} className={`io-event io-event-${event.type}`}>
+                          <span>{event.message}</span>
+                          <span className="io-event-time">{new Date(event.timestamp).toLocaleTimeString()}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="io-empty">No printer activity yet.</p>
+                  )}
+                </div>
+
+                <h4>Completed Jobs</h4>
+                <div className="io-completed-wrapper">
+                  {completedJobs.length > 0 ? (
+                    <ul className="io-history">
+                      {completedJobs.map((job) => (
+                        <li key={`${job.id}-${job.completedAt}`}>{job.id} {job.documentName} completed</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="io-empty">No completed jobs yet.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </section>
       </div>
-
-      <section className="io-panel io-log-panel">
-        <div className="panel-title-row">
-          <div>
-            <h3>Event Log</h3>
-            <p>Printer activity, page-by-page cues, and sound markers.</p>
-          </div>
-        </div>
-        {events.length > 0 ? (
-          <ul className="io-history">
-            {events.map((event) => (
-              <li key={event.id} className={`io-event io-event-${event.type}`}>
-                <span>{event.message}</span>
-                <span className="io-event-time">{new Date(event.timestamp).toLocaleTimeString()}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="io-empty">No printer activity yet.</p>
-        )}
-
-        <h3>Completed Jobs</h3>
-        {completedJobs.length > 0 ? (
-          <ul className="io-history">
-            {completedJobs.map((job) => (
-              <li key={`${job.id}-${job.completedAt}`}>{job.id} {job.documentName} completed</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="io-empty">No completed jobs yet.</p>
-        )}
-      </section>
     </div>
   );
 };
