@@ -123,6 +123,8 @@ const ioReducer = (state, action) => {
       return ioActions.submitPrintJob(state, action.payload);
     case 'START_NEXT_JOB':
       return ioActions.startNextJob(state);
+    case 'ADVANCE_CURRENT_JOB':
+      return ioActions.advanceCurrentJob(state, action.payload.jobId, action.payload.progress);
     case 'COMPLETE_CURRENT_JOB':
       return ioActions.completeAndAdvance(state);
     case 'CANCEL_PRINT_JOB':
@@ -497,6 +499,43 @@ export const OSProvider = ({ children }) => {
   const getCompletedJobs = useCallback(() => ioActions.getCompletedJobs(ioState), [ioState]);
   const getActiveJob = useCallback(() => ioActions.getActiveJob(ioState), [ioState]);
   const getIOEvents = useCallback(() => ioActions.getEvents(ioState), [ioState]);
+  const getPrinterMetrics = useCallback(() => ioActions.getPrinterMetrics(ioState), [ioState]);
+
+  useEffect(() => {
+    const activeJob = ioActions.getActiveJob(ioState);
+    if (!activeJob) return undefined;
+
+    const tickMs = Math.max(400, activeJob.pages * 300);
+    const interval = window.setInterval(() => {
+      const current = ioActions.getActiveJob(ioState);
+      if (!current) return;
+
+      const nextProgress = Math.min(100, current.progress + Math.ceil(100 / current.estimatedTicks));
+      ioDispatch({
+        type: 'ADVANCE_CURRENT_JOB',
+        payload: { jobId: current.id, progress: nextProgress },
+      });
+
+      if (nextProgress >= 100) {
+        const nextQueuedJob = ioActions.getQueuedJobs(ioState)[0];
+        ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
+
+        processDispatch({
+          type: 'UPDATE_PROCESS_STATE',
+          payload: { processId: current.processId, state: 'Ready' },
+        });
+
+        if (nextQueuedJob) {
+          processDispatch({
+            type: 'UPDATE_PROCESS_STATE',
+            payload: { processId: nextQueuedJob.processId, state: 'Running' },
+          });
+        }
+      }
+    }, tickMs);
+
+    return () => window.clearInterval(interval);
+  }, [ioState, processDispatch]);
 
   const value = {
     // Window state & operations
@@ -574,6 +613,7 @@ export const OSProvider = ({ children }) => {
     getCompletedJobs,
     getActiveJob,
     getIOEvents,
+    getPrinterMetrics,
   };
 
   return <OSContext.Provider value={value}>{children}</OSContext.Provider>;

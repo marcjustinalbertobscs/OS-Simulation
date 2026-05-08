@@ -14,6 +14,7 @@ const PrinterQueue = () => {
     getCompletedJobs,
     getActiveJob,
     getIOEvents,
+    getPrinterMetrics,
   } = useOS();
 
   const [processId, setProcessId] = useState('P1');
@@ -25,6 +26,7 @@ const PrinterQueue = () => {
   const completedJobs = getCompletedJobs();
   const activeJob = getActiveJob();
   const events = getIOEvents();
+  const metrics = getPrinterMetrics();
 
   const handleSubmit = () => {
     if (!documentName.trim()) return;
@@ -37,8 +39,12 @@ const PrinterQueue = () => {
   const getStatusClass = (status) => {
     if (status === 'Printing') return 'io-status io-status-active';
     if (status === 'Completed') return 'io-status io-status-complete';
+    if (status === 'Busy') return 'io-status io-status-active';
+    if (status === 'Spooling') return 'io-status io-status-spooling';
     return 'io-status io-status-queued';
   };
+
+  const progressValue = metrics.activeJob ? metrics.progress : 0;
 
   return (
     <div className="io-simulation">
@@ -85,9 +91,19 @@ const PrinterQueue = () => {
         <section className="io-panel">
           <h3>Printer Status</h3>
           <div className="printer-card">
-            <div><strong>Status:</strong> <span className={getStatusClass(ioState.printerStatus)}>{ioState.printerStatus}</span></div>
+            <div><strong>Status:</strong> <span className={getStatusClass(metrics.deviceStatus)}>{metrics.deviceStatus}</span></div>
             <div><strong>Active Job:</strong> {activeJob ? `${activeJob.id} - ${activeJob.documentName}` : 'None'}</div>
             <div><strong>Queued Jobs:</strong> {queuedJobs.length}</div>
+            <div><strong>Completed Jobs:</strong> {completedJobs.length}</div>
+          </div>
+          <div className="io-progress-wrap">
+            <div className="io-progress-label">
+              <span>Print Progress</span>
+              <span>{progressValue}%</span>
+            </div>
+            <div className="io-progress-bar">
+              <div className="io-progress-fill" style={{ width: `${progressValue}%` }} />
+            </div>
           </div>
           <h4>Spool Queue</h4>
           <table className="io-table">
@@ -98,6 +114,7 @@ const PrinterQueue = () => {
                 <th>Document</th>
                 <th>Pages</th>
                 <th>Status</th>
+                <th>Progress</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -109,6 +126,7 @@ const PrinterQueue = () => {
                   <td>{job.documentName}</td>
                   <td>{job.pages}</td>
                   <td><span className={getStatusClass(job.status)}>{job.status}</span></td>
+                  <td>{job.progress}%</td>
                   <td>
                     <button
                       className="btn btn-sm btn-danger"

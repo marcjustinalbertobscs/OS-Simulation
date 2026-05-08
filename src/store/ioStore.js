@@ -9,6 +9,8 @@ const createJob = ({ id, processId, documentName, pages, notes = '' }) => ({
   pages,
   notes,
   status: 'Queued',
+  progress: 0,
+  estimatedTicks: Math.max(4, pages * 2),
   submittedAt: null,
   startedAt: null,
   completedAt: null,
@@ -46,6 +48,7 @@ export const ioActions = {
 
     return {
       ...state,
+      printerStatus: state.currentJobId ? 'Busy' : 'Spooling',
       jobs: [...state.jobs, { ...nextJob, submittedAt: new Date().toISOString() }],
       nextJobCounter: state.nextJobCounter + 1,
       events: [
@@ -68,14 +71,31 @@ export const ioActions = {
 
     return {
       ...state,
-      printerStatus: 'Printing',
+      printerStatus: 'Busy',
       currentJobId: nextJob.id,
       jobs: state.jobs.map((job) =>
         job.id === nextJob.id
-          ? { ...job, status: 'Printing', startedAt: new Date().toISOString() }
+          ? { ...job, status: 'Printing', progress: 0, startedAt: new Date().toISOString() }
           : job
         ),
       events: [...state.events, createEvent(`${nextJob.id} started on printer`, 'success')],
+    };
+  },
+
+  advanceCurrentJob: (state, jobId, nextProgress) => {
+    const job = state.jobs.find((entry) => entry.id === jobId);
+    if (!job) return state;
+
+    return {
+      ...state,
+      jobs: state.jobs.map((entry) =>
+        entry.id === jobId
+          ? {
+              ...entry,
+              progress: Math.min(100, nextProgress),
+            }
+          : entry
+      ),
     };
   },
 
@@ -84,14 +104,17 @@ export const ioActions = {
 
     const completedAt = new Date().toISOString();
     const completedJob = state.jobs.find((job) => job.id === state.currentJobId);
+    const completedJobId = state.currentJobId;
 
     return {
       ...state,
       currentJobId: null,
-      printerStatus: 'Idle',
+      printerStatus: state.jobs.some((job) => job.id !== completedJob?.id && job.status === 'Queued')
+        ? 'Spooling'
+        : 'Idle',
       jobs: state.jobs.map((job) =>
-        job.id === state.currentJobId
-          ? { ...job, status: 'Completed', completedAt }
+        job.id === completedJobId
+          ? { ...job, status: 'Completed', progress: 100, completedAt }
           : job
       ),
       history: completedJob
@@ -134,4 +157,17 @@ export const ioActions = {
   getCompletedJobs: (state) => state.history,
   getActiveJob: (state) => state.jobs.find((job) => job.id === state.currentJobId) || null,
   getEvents: (state) => state.events,
+  getPrinterMetrics: (state) => {
+    const activeJob = ioActions.getActiveJob(state);
+    const queuedJobs = ioActions.getQueuedJobs(state);
+
+    return {
+      deviceStatus: state.printerStatus,
+      activeJob,
+      queuedCount: queuedJobs.length,
+      completedCount: state.history.length,
+      progress: activeJob ? activeJob.progress : 0,
+      estimatedTicks: activeJob ? activeJob.estimatedTicks : 0,
+    };
+  },
 };
