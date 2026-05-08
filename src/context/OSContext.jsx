@@ -468,7 +468,6 @@ export const OSProvider = ({ children }) => {
 
   const completeCurrentJob = useCallback(() => {
     const activeJob = ioActions.getActiveJob(ioState);
-    const nextJob = ioActions.getQueuedJobs(ioState)[0];
     ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
     if (activeJob) {
       processDispatch({
@@ -477,12 +476,6 @@ export const OSProvider = ({ children }) => {
           processId: activeJob.processId,
           state: 'Ready',
         },
-      });
-    }
-    if (nextJob) {
-      processDispatch({
-        type: 'UPDATE_PROCESS_STATE',
-        payload: { processId: nextJob.processId, state: 'Running' },
       });
     }
   }, [ioState]);
@@ -517,20 +510,12 @@ export const OSProvider = ({ children }) => {
       });
 
       if (nextProgress >= 100) {
-        const nextQueuedJob = ioActions.getQueuedJobs(ioState)[0];
         ioDispatch({ type: 'COMPLETE_CURRENT_JOB' });
 
         processDispatch({
           type: 'UPDATE_PROCESS_STATE',
           payload: { processId: current.processId, state: 'Ready' },
         });
-
-        if (nextQueuedJob) {
-          processDispatch({
-            type: 'UPDATE_PROCESS_STATE',
-            payload: { processId: nextQueuedJob.processId, state: 'Running' },
-          });
-        }
       }
     }, tickMs);
 

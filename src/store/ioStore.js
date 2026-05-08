@@ -10,6 +10,8 @@ const createJob = ({ id, processId, documentName, pages, notes = '' }) => ({
   notes,
   status: 'Queued',
   progress: 0,
+  pagesPrinted: 0,
+  currentPage: 0,
   estimatedTicks: Math.max(4, pages * 2),
   submittedAt: null,
   startedAt: null,
@@ -75,7 +77,14 @@ export const ioActions = {
       currentJobId: nextJob.id,
       jobs: state.jobs.map((job) =>
         job.id === nextJob.id
-          ? { ...job, status: 'Printing', progress: 0, startedAt: new Date().toISOString() }
+          ? {
+              ...job,
+              status: 'Printing',
+              progress: 0,
+              pagesPrinted: 0,
+              currentPage: 0,
+              startedAt: new Date().toISOString(),
+            }
           : job
         ),
       events: [...state.events, createEvent(`${nextJob.id} started on printer`, 'success')],
@@ -86,6 +95,15 @@ export const ioActions = {
     const job = state.jobs.find((entry) => entry.id === jobId);
     if (!job) return state;
 
+    const nextPagesPrinted = Math.min(job.pages, Math.max(0, Math.ceil((nextProgress / 100) * job.pages)));
+    const previousPagesPrinted = job.pagesPrinted || 0;
+    const newEvents = [];
+
+    for (let page = previousPagesPrinted + 1; page <= nextPagesPrinted; page += 1) {
+      newEvents.push(createEvent(`${job.id} page ${page}/${job.pages} printed`, 'page'));
+      newEvents.push(createEvent('Printer beep', 'sound'));
+    }
+
     return {
       ...state,
       jobs: state.jobs.map((entry) =>
@@ -93,9 +111,12 @@ export const ioActions = {
           ? {
               ...entry,
               progress: Math.min(100, nextProgress),
+              pagesPrinted: nextPagesPrinted,
+              currentPage: Math.min(entry.pages, Math.max(1, nextPagesPrinted || 1)),
             }
           : entry
       ),
+      events: newEvents.length > 0 ? [...state.events, ...newEvents] : state.events,
     };
   },
 
@@ -114,7 +135,7 @@ export const ioActions = {
         : 'Idle',
       jobs: state.jobs.map((job) =>
         job.id === completedJobId
-          ? { ...job, status: 'Completed', progress: 100, completedAt }
+          ? { ...job, status: 'Completed', progress: 100, pagesPrinted: job.pages, currentPage: job.pages, completedAt }
           : job
       ),
       history: completedJob
